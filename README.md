@@ -1,6 +1,6 @@
 # Meu Primeiro PR
 
-Este é um repositório de prática para aprendar o fluxo de Pull Requests no GitHub.
+Este é um repositório de prática para aprender o fluxo de Pull Requests no GitHub.
 
 ## Sobre
 
