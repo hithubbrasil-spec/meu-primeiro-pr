@@ -1,0 +1,350 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HitHub | Inbox WhatsApp</title><style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#25212d;background:#f8f8fc}
+*{box-sizing:border-box}body{margin:0}
+.app{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:100vh}
+.sidebar{background:linear-gradient(165deg,#3d1b50,#5d2759 65%,#713053);color:#fff;padding:27px 18px}
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:30px}
+.brand i{display:grid;place-items:center;width:46px;height:42px;background:#fff;color:#7d2a84;border-radius:11px;font-style:normal;font-weight:900;font-size:13px}
+.brand span{font-size:11px;letter-spacing:.13em;font-weight:800;line-height:1.35}
+.nav-label{font-size:11px;letter-spacing:.14em;color:#c7aacb;font-weight:850;margin:26px 12px 10px}
+.nav a{display:flex;align-items:center;gap:10px;color:#eee0ee;text-decoration:none;border-radius:11px;padding:12px 15px;font-size:14px;font-weight:650}
+.nav a .dot{width:7px;height:7px;border-radius:50%;background:#e9a6de;flex:none}
+.nav a .pill{margin-left:auto;background:#e82d82;color:#fff;font-size:10px;font-weight:850;border-radius:99px;padding:2px 7px}
+.nav a.active,.nav a:hover{background:#fff;color:#732878}
+.nav a.active .dot,.nav a:hover .dot{background:#b6379f}
+.content{min-width:0;display:flex;flex-direction:column;height:100vh}
+.topbar{height:76px;flex:none;background:#fff;border-bottom:1px solid #ece7ef;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 clamp(20px,3vw,34px)}
+.searchbar{border:1px solid #e5dfeb;border-radius:11px;background:#faf9fc;color:#898391;padding:13px 17px;width:min(430px,45%);font:inherit;font-size:13px}
+.profile{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:750;white-space:nowrap}
+.profile b{display:inline-grid;place-items:center;width:33px;height:33px;background:#8c3293;color:#fff;border-radius:50%}
+.profile small{display:block;font-weight:600;color:#7d7684;font-size:11px}
+.exit{border:1px solid #e5dfeb;background:#fff;border-radius:9px;padding:9px 13px;font:inherit;font-size:12px;font-weight:750;color:#6c596e;cursor:pointer}
+.inbox{flex:1;min-height:0;display:grid;grid-template-columns:340px minmax(0,1fr) 290px}
+
+/* ---- coluna de leads ---- */
+.leads{border-right:1px solid #ece7ef;background:#fdfcff;display:flex;flex-direction:column;min-height:0}
+.leads header{padding:18px 18px 12px;border-bottom:1px solid #f0eaf2}
+.leads h1{font-size:21px;letter-spacing:-.045em;margin:0 0 3px}
+.leads header p{margin:0 0 13px;font-size:12px;color:#7b7381}
+.tabs{display:flex;border:1px solid #e5deea;border-radius:10px;padding:3px;background:#fff}
+.tabs button{flex:1;background:none;border:0;border-radius:7px;color:#706878;font:inherit;font-size:11px;font-weight:750;padding:7px 4px;cursor:pointer}
+.tabs button.active{background:#f5e8f7;color:#81268a}
+.leads input.q{margin:10px 0 0;width:100%;height:36px;border:1px solid #e5deea;border-radius:9px;padding:0 11px;font:inherit;font-size:12px;color:#5b5361;background:#fff}
+.list{overflow:auto;padding:8px}
+.lead{display:grid;grid-template-columns:38px minmax(0,1fr);gap:11px;padding:12px;border-radius:12px;cursor:pointer;border:1px solid transparent}
+.lead:hover{background:#faf6fb}
+.lead.on{background:#fff;border-color:#e7d9ea;box-shadow:0 3px 12px #431d5110}
+.lead .av{width:38px;height:38px;border-radius:12px;background:#f1d9ee;color:#9c308c;display:grid;place-items:center;font-size:12px;font-weight:850}
+.lead .top{display:flex;align-items:center;gap:8px}
+.lead .nm{font-size:13px;font-weight:850;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lead .tm{margin-left:auto;font-size:10px;color:#948c98;white-space:nowrap}
+.lead .pv{font-size:11.5px;color:#76707c;margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.lead .meta{display:flex;align-items:center;gap:6px;margin-top:7px;flex-wrap:wrap}
+.unread{margin-left:auto;background:#e82d82;color:#fff;font-size:10px;font-weight:850;border-radius:99px;padding:2px 7px}
+.tag{display:inline-block;font-size:9.5px;font-weight:850;color:#8c367b;background:#fae8f2;padding:4px 7px;border-radius:6px}
+.tag.audicao{color:#6c3e9e;background:#eee8f9}
+.tag.contrato{color:#2f6a86;background:#e4f1f7}
+.tag.royalties{color:#387a50;background:#e9f5ed}
+.tag.shows{color:#96591b;background:#fbeedd}
+.win{font-size:9.5px;font-weight:850;padding:4px 7px;border-radius:6px;background:#e9f5ed;color:#387a50}
+.win.closed{background:#f2eef3;color:#7c7482}
+.win.warn{background:#fdf1de;color:#8a5a12}
+
+/* ---- conversa ---- */
+.thread{display:flex;flex-direction:column;min-width:0;min-height:0;background:#fff}
+.thead{flex:none;display:flex;align-items:center;gap:12px;padding:15px 22px;border-bottom:1px solid #f0eaf2}
+.thead .av{width:40px;height:40px;border-radius:13px;background:#f1d9ee;color:#9c308c;display:grid;place-items:center;font-size:13px;font-weight:850}
+.thead h2{margin:0;font-size:15px;letter-spacing:-.02em}
+.thead small{color:#7b7381;font-size:11.5px}
+.thead .acts{margin-left:auto;display:flex;gap:7px}
+.ghost{border:1px solid #e7dfea;background:#fff;border-radius:8px;padding:8px 11px;font:inherit;font-size:11px;font-weight:800;color:#6c596e;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
+.ghost.go{color:#7e2685;background:#f9f0fa;border-color:#f0e2f2}
+.msgs{flex:1;overflow:auto;padding:22px;background:#fbf9fc;display:flex;flex-direction:column;gap:10px}
+.day{align-self:center;font-size:10px;font-weight:800;color:#8b8290;background:#f1ecf3;border-radius:99px;padding:5px 11px;margin:6px 0}
+.b{max-width:min(520px,78%);padding:11px 14px;border-radius:14px;font-size:13px;line-height:1.5;position:relative}
+.b.in{align-self:flex-start;background:#fff;border:1px solid #ebe5ee;border-bottom-left-radius:5px}
+.b.out{align-self:flex-end;background:linear-gradient(95deg,#f3e3f6,#eadef5);border:1px solid #e6d5ec;border-bottom-right-radius:5px}
+.b .t{display:block;margin-top:6px;font-size:10px;color:#8b8290;text-align:right}
+.b.out .t::after{content:' ✓✓';color:#8f298d;font-weight:800}
+.b.tpl::before{content:'TEMPLATE';display:block;font-size:9px;font-weight:850;letter-spacing:.1em;color:#8f298d;margin-bottom:5px}
+.b.note{align-self:center;max-width:min(520px,80%);background:#fff8e6;border:1px dashed #ecd9a5;color:#7a6634;font-size:12px}
+.b.note::before{content:'NOTA INTERNA — não enviada ao cliente';display:block;font-size:9px;font-weight:850;letter-spacing:.09em;color:#a58436;margin-bottom:5px}
+
+/* ---- composer ---- */
+.composer{flex:none;border-top:1px solid #f0eaf2;padding:14px 22px 18px;background:#fff}
+.winbar{display:flex;align-items:center;gap:9px;font-size:11.5px;font-weight:750;border-radius:10px;padding:9px 12px;margin-bottom:11px}
+.winbar.open{background:#e9f5ed;color:#2f6845}
+.winbar.warn{background:#fdf1de;color:#8a5a12}
+.winbar.closed{background:#f7f3f8;color:#6b6372}
+.winbar b{font-weight:850}
+.winbar .lnk{margin-left:auto;color:#8f298d;font-weight:850;cursor:pointer;text-decoration:underline}
+.box{border:1px solid #e5deea;border-radius:13px;padding:11px 13px}
+.box textarea{width:100%;border:0;resize:none;font:inherit;font-size:13px;min-height:46px;outline:none;color:#3f3947}
+.box textarea::placeholder{color:#a49cab}
+.brow{display:flex;align-items:center;gap:7px;margin-top:7px}
+.chip{border:1px solid #e7dfea;background:#fff;border-radius:7px;padding:6px 9px;font:inherit;font-size:10.5px;font-weight:800;color:#6c596e;cursor:pointer}
+.chip.on{background:#f9f0fa;color:#7e2685;border-color:#f0e2f2}
+.send{margin-left:auto;border:0;border-radius:9px;background:linear-gradient(95deg,#e82d82,#82248e);color:#fff;padding:10px 18px;font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.send:disabled{background:#ded7e2;color:#fff;cursor:not-allowed}
+.locked{background:#f7f3f8;border:1px dashed #ded4e2;border-radius:13px;padding:16px;text-align:center}
+.locked p{margin:0 0 11px;font-size:12px;color:#6b6372;line-height:1.5}
+
+/* ---- ficha ---- */
+.side{border-left:1px solid #ece7ef;background:#fdfcff;padding:20px 18px;overflow:auto}
+.side h3{font-size:10.5px;letter-spacing:.12em;color:#8b8290;font-weight:850;margin:0 0 10px}
+.card{background:#fff;border:1px solid #eae5ed;border-radius:13px;padding:14px;margin-bottom:14px}
+.kv{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:7px 0;border-bottom:1px solid #f4f0f6}
+.kv:last-child{border:0}
+.kv span{color:#7b7381}.kv b{font-weight:800;text-align:right}
+.side select,.side input{width:100%;height:36px;border:1px solid #e5deea;border-radius:9px;padding:0 10px;font:inherit;font-size:12px;color:#5b5361;background:#fff;margin-bottom:9px}
+.tl{position:relative;padding-left:16px}
+.tl li{list-style:none;font-size:11.5px;color:#6b6372;line-height:1.45;padding:0 0 13px}
+.tl li::before{content:'';position:absolute;left:0;width:7px;height:7px;border-radius:50%;background:#d9b9db;margin-top:5px}
+.tl li b{display:block;color:#3f3947;font-weight:800}
+.tl li small{color:#948c98}
+
+/* ---- modal template ---- */
+.modalwrap{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#21152b99;z-index:4;padding:15px}
+.modalwrap.open{display:flex}
+.modal{background:#fff;width:min(520px,100%);max-height:95vh;overflow:auto;border-radius:18px;padding:26px}
+.modal h2{margin:0 0 6px;letter-spacing:-.04em;font-size:20px}
+.modal p{font-size:12.5px;color:#766f7b;line-height:1.5;margin:0 0 16px}
+.tpl{border:1px solid #e7dfea;border-radius:12px;padding:13px;margin-bottom:9px;cursor:pointer}
+.tpl.on{border-color:#c98fd0;background:#fdf8fe}
+.tpl .nm{font-size:12.5px;font-weight:850;display:flex;align-items:center;gap:8px}
+.ok{font-size:9px;font-weight:850;color:#387a50;background:#e9f5ed;padding:3px 7px;border-radius:5px}
+.tpl .bd{font-size:12px;color:#6b6372;line-height:1.5;margin-top:7px}
+.tpl .bd em{font-style:normal;background:#f5e8f7;color:#81268a;font-weight:800;padding:1px 4px;border-radius:4px}
+.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.cancel{border:1px solid #e2dce5;border-radius:9px;background:#fff;padding:10px 13px;font:inherit;font-weight:750;cursor:pointer}
+@media(max-width:1200px){.inbox{grid-template-columns:300px minmax(0,1fr)}.side{display:none}}
+@media(max-width:900px){.app{display:block}.sidebar{display:none}.content{height:auto}.inbox{display:block}
+ .leads{border-right:0;border-bottom:1px solid #ece7ef}.list{max-height:320px}.msgs{min-height:340px}}
+</style></head><body>
+<div class="app">
+ <aside class="sidebar">
+  <div class="brand"><i>HH</i><span>HITHUB<br>BRASIL</span></div>
+  <nav class="nav">
+   <a href="#"><span class="dot"></span>Solicitações</a>
+   <a href="#"><span class="dot"></span>Caixa da empresa</a>
+   <a href="#"><span class="dot"></span>Suporte<span class="pill">1</span></a>
+   <a href="#"><span class="dot"></span>Notificações</a>
+   <a href="#" class="active"><span class="dot"></span>Atendimento WhatsApp<span class="pill">3</span></a>
+   <a href="#"><span class="dot"></span>Indicações</a>
+   <a href="#"><span class="dot"></span>Audições</a>
+   <a href="#"><span class="dot"></span>Revisão de obras</a>
+   <div class="nav-label">ADMINISTRAÇÃO</div>
+   <a href="#"><span class="dot"></span>Equipe</a>
+   <a href="#"><span class="dot"></span>Configurações</a>
+  </nav>
+ </aside>
+ <main class="content">
+  <header class="topbar">
+   <input class="searchbar" placeholder="Buscar artistas, compositores, projetos, obras, contratos…">
+   <div class="profile"><b>HB</b><div>HitHub Brasil (Admin Principal)<small>superadmin</small></div><button class="exit">Sair</button></div>
+  </header>
+
+  <div class="inbox">
+   <!-- LEADS -->
+   <section class="leads">
+    <header>
+     <h1>Inbox WhatsApp</h1>
+     <p id="sub">— conversas</p>
+     <div class="tabs">
+      <button data-f="todos" class="active">Todos</button>
+      <button data-f="novo">Novos</button>
+      <button data-f="andamento">Meus</button>
+      <button data-f="resolvido">Resolvidos</button>
+     </div>
+     <input class="q" id="q" placeholder="Buscar nome, telefone ou mensagem…">
+    </header>
+    <div class="list" id="list"></div>
+   </section>
+
+   <!-- CONVERSA -->
+   <section class="thread">
+    <div class="thead">
+     <span class="av" id="tav">—</span>
+     <div><h2 id="tnm">Selecione uma conversa</h2><small id="tph"></small></div>
+     <div class="acts">
+      <button class="ghost" id="bNote">+ Nota interna</button>
+      <button class="ghost go" id="bLead">Converter em artista</button>
+     </div>
+    </div>
+    <div class="msgs" id="msgs"></div>
+    <div class="composer" id="composer"></div>
+   </section>
+
+   <!-- FICHA -->
+   <aside class="side">
+    <h3>FICHA DO LEAD</h3>
+    <div class="card" id="ficha"></div>
+    <h3>TRIAGEM</h3>
+    <div class="card">
+     <select id="sStatus"><option value="novo">Novo</option><option value="andamento">Em atendimento</option><option value="resolvido">Resolvido</option></select>
+     <select id="sResp"><option>Sem responsável</option><option>Ana (A&R)</option><option>Bruno (Jurídico)</option><option>Carla (Financeiro)</option></select>
+     <select id="sCat"><option>Audição</option><option>Contrato</option><option>Royalties</option><option>Shows</option><option>Outros</option></select>
+    </div>
+    <h3>HISTÓRICO</h3>
+    <div class="card"><ul class="tl" id="tl"></ul></div>
+   </aside>
+  </div>
+ </main>
+</div>
+
+<!-- MODAL TEMPLATES -->
+<div class="modalwrap" id="modal">
+ <div class="modal">
+  <h2>Reabrir conversa com template</h2>
+  <p>Passaram-se mais de 24h desde a última mensagem do contato. Pela política da Meta, só é possível reabrir com um template aprovado. Cada envio abre uma conversa cobrada.</p>
+  <div id="tpls"></div>
+  <div class="actions"><button class="cancel" id="mCancel">Cancelar</button><button class="send" id="mSend">Enviar template</button></div>
+ </div>
+</div>
+
+<script>
+const H=36e5, now=Date.now();
+const LEADS=[
+ {id:1,nome:'Marina Prado',fone:'+55 11 98432-1190',cat:'Audição',status:'novo',resp:'Sem responsável',unread:2,
+  origem:'Anúncio Instagram',primeiro:now-2*24*H,
+  msgs:[
+   {d:'in',t:now-52*60000,x:'Oi! Vi o anúncio de vocês. Sou cantora e compositora, tenho 3 músicas autorais prontas. Como faço pra mandar pra audição?'},
+   {d:'in',t:now-50*60000,x:'Já tenho tudo registrado, só não sei como distribuir.'}]},
+ {id:2,nome:'Rafael Bittencourt',fone:'+55 21 99155-2043',cat:'Contrato',status:'andamento',resp:'Bruno (Jurídico)',unread:0,
+  origem:'Indicação',primeiro:now-9*24*H,
+  msgs:[
+   {d:'in',t:now-26*H,x:'Boa tarde! Recebi a minuta do contrato de edição, mas fiquei com dúvida na cláusula de exclusividade.'},
+   {d:'out',t:now-25*H,x:'Boa tarde, Rafael! Vou encaminhar ao jurídico e te respondo ainda hoje.'},
+   {d:'note',t:now-25*H,x:'Bruno vai revisar a cláusula 4.2 antes de responder. Prazo combinado: sexta.'},
+   {d:'in',t:now-4*H,x:'Perfeito, fico no aguardo. Obrigado!'}]},
+ {id:3,nome:'Duo Alvorada',fone:'+55 31 98700-4412',cat:'Shows',status:'novo',resp:'Sem responsável',unread:1,
+  origem:'Bot WhatsApp',primeiro:now-5*H,
+  msgs:[{d:'in',t:now-5*H,x:'Somos uma dupla de MPB de BH. Vocês fazem agenciamento de shows pra artistas independentes?'}]},
+ {id:4,nome:'Letícia Nunes',fone:'+55 85 99321-7788',cat:'Royalties',status:'andamento',resp:'Carla (Financeiro)',unread:0,
+  origem:'Bot WhatsApp',primeiro:now-21*24*H,
+  msgs:[
+   {d:'in',t:now-3*24*H,x:'Oi, não recebi o repasse deste mês. Consegue verificar?'},
+   {d:'out',t:now-3*24*H,x:'Oi Letícia! Vou puxar o relatório do distribuidor e te retorno.'},
+   {d:'note',t:now-2*24*H,x:'Relatório do distribuidor atrasou. Pagamento previsto para o dia 10.'}]},
+ {id:5,nome:'Thiago Moraes',fone:'+55 41 98220-6650',cat:'Audição',status:'resolvido',resp:'Ana (A&R)',unread:0,
+  origem:'Site',primeiro:now-40*24*H,
+  msgs:[
+   {d:'in',t:now-12*24*H,x:'Mandei meu material no formulário, conseguiram ouvir?'},
+   {d:'out',t:now-11*24*H,x:'Ouvimos sim! Gostamos muito do single. Vamos te chamar pra uma conversa.'},
+   {d:'in',t:now-11*24*H,x:'Que ótimo, muito obrigado!!'}]}];
+const TPLS=[
+ {n:'hithub_retomada_audicao',b:'Olá <em>{{1}}</em>! Aqui é a HitHub Brasil. Retomando nossa conversa sobre sua audição — podemos seguir?'},
+ {n:'hithub_lembrete_documento',b:'Oi <em>{{1}}</em>, tudo bem? Ainda estamos aguardando o envio de <em>{{2}}</em> para dar andamento ao seu contrato.'},
+ {n:'hithub_aviso_repasse',b:'Olá <em>{{1}}</em>! O repasse referente a <em>{{2}}</em> foi processado. Qualquer dúvida, é só responder por aqui.'}];
+const LBL={novo:'Novo',andamento:'Em atendimento',resolvido:'Resolvido'};
+let sel=1,filtro='todos',tplSel=0;
+const safe=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const slug=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const ini=n=>n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const hora=t=>new Date(t).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+const dia=t=>{const d=new Date(t),h=new Date(),o=(h.setHours(0,0,0,0)-new Date(t).setHours(0,0,0,0))/864e5;
+ return o===0?'Hoje':o===1?'Ontem':d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})};
+const rel=t=>{const m=Math.floor((Date.now()-t)/6e4);
+ return m<1?'agora':m<60?m+' min':m<1440?Math.floor(m/60)+' h':Math.floor(m/1440)+' d'};
+const ultIn=l=>Math.max(...l.msgs.filter(m=>m.d==='in').map(m=>m.t),0);
+const restante=l=>{const u=ultIn(l);return u?24*H-(Date.now()-u):-1};
+
+function pintaLista(){
+ const q=slug(document.querySelector('#q').value.trim());
+ const vis=LEADS.filter(l=>(filtro==='todos'||l.status===filtro)
+  &&(!q||slug(l.nome+' '+l.fone+' '+l.msgs.map(m=>m.x).join(' ')).includes(q)))
+  .sort((a,b)=>b.msgs.at(-1).t-a.msgs.at(-1).t);
+ document.querySelector('#sub').textContent=`${vis.length} conversa(s) · ${LEADS.reduce((s,l)=>s+l.unread,0)} não lida(s)`;
+ document.querySelector('#list').innerHTML=vis.map(l=>{
+  const m=l.msgs.at(-1),r=restante(l);
+  const w=r<0?['closed','Janela fechada']:r>6*H?['','Janela aberta']:r>0?['warn',Math.ceil(r/H)+'h restantes']:['closed','Janela fechada'];
+  return `<div class="lead ${l.id===sel?'on':''}" data-id="${l.id}">
+   <span class="av">${ini(l.nome)}</span>
+   <div><div class="top"><span class="nm">${safe(l.nome)}</span><span class="tm">${rel(m.t)}</span></div>
+   <div class="pv">${m.d==='note'?'📝 ':m.d==='out'?'Você: ':''}${safe(m.x)}</div>
+   <div class="meta"><span class="tag ${slug(l.cat)}">${l.cat}</span><span class="win ${w[0]}">${w[1]}</span>
+   ${l.unread?`<span class="unread">${l.unread}</span>`:''}</div></div></div>`}).join('')
+   ||'<div style="padding:26px 14px;color:#8b8290;font-size:12px">Nenhuma conversa neste filtro.</div>';
+}
+
+function pintaThread(){
+ const l=LEADS.find(x=>x.id===sel);if(!l)return;
+ document.querySelector('#tav').textContent=ini(l.nome);
+ document.querySelector('#tnm').textContent=l.nome;
+ document.querySelector('#tph').textContent=`${l.fone} · ${l.cat} · ${LBL[l.status]} · ${l.resp}`;
+ let ult='';
+ document.querySelector('#msgs').innerHTML=l.msgs.map(m=>{
+  const d=dia(m.t),sep=d!==ult?(ult=d,`<div class="day">${d}</div>`):'';
+  if(m.d==='note')return sep+`<div class="b note">${safe(m.x)}</div>`;
+  return sep+`<div class="b ${m.d==='in'?'in':'out'}${m.tpl?' tpl':''}">${safe(m.x)}<span class="t">${hora(m.t)}</span></div>`}).join('');
+ const box=document.querySelector('#msgs');box.scrollTop=box.scrollHeight;
+
+ const r=restante(l);
+ const comp=document.querySelector('#composer');
+ if(r>0){
+  const horas=Math.ceil(r/H),cls=horas<=6?'warn':'open';
+  comp.innerHTML=`<div class="winbar ${cls}"><b>Janela de 24h aberta</b> — restam ${horas}h para responder com texto livre.</div>
+   <div class="box"><textarea id="txt" placeholder="Escreva sua resposta para ${safe(l.nome)}…"></textarea>
+   <div class="brow"><button class="chip" data-q="Olá! Aqui é a HitHub Brasil, tudo bem?">Saudação</button>
+   <button class="chip" data-q="Pode nos enviar o link do seu material?">Pedir material</button>
+   <button class="chip" id="cNote">Nota interna</button>
+   <button class="send" id="bSend">Enviar</button></div></div>`;
+ }else{
+  comp.innerHTML=`<div class="winbar closed"><b>Janela de 24h encerrada</b> — texto livre bloqueado pela Meta.<span class="lnk" id="openTpl">Usar template →</span></div>
+   <div class="locked"><p>A última mensagem de ${safe(l.nome)} foi há mais de 24 horas.<br>Para reabrir a conversa, envie um template aprovado.</p>
+   <button class="send" id="bTpl">Escolher template aprovado</button></div>`;
+ }
+ // ficha
+ document.querySelector('#ficha').innerHTML=`
+  <div class="kv"><span>Telefone</span><b>${safe(l.fone)}</b></div>
+  <div class="kv"><span>Origem</span><b>${safe(l.origem)}</b></div>
+  <div class="kv"><span>Primeiro contato</span><b>${new Date(l.primeiro).toLocaleDateString('pt-BR')}</b></div>
+  <div class="kv"><span>Mensagens</span><b>${l.msgs.filter(m=>m.d!=='note').length}</b></div>
+  <div class="kv"><span>Janela</span><b>${r>0?Math.ceil(r/H)+'h restantes':'Fechada'}</b></div>`;
+ document.querySelector('#sStatus').value=l.status;
+ document.querySelector('#sResp').value=l.resp;
+ document.querySelector('#sCat').value=l.cat;
+ document.querySelector('#tl').innerHTML=[
+  `<li><b>Lead criado</b><small>${new Date(l.primeiro).toLocaleDateString('pt-BR')} · ${safe(l.origem)}</small></li>`,
+  `<li><b>Classificado como ${safe(l.cat)}</b><small>Triagem automática do bot</small></li>`,
+  l.resp!=='Sem responsável'?`<li><b>Atribuído a ${safe(l.resp)}</b><small>há ${rel(l.msgs[0].t)}</small></li>`:'',
+  l.status==='resolvido'?`<li><b>Conversa resolvida</b><small>há ${rel(l.msgs.at(-1).t)}</small></li>`:''
+ ].join('');
+}
+function pinta(){pintaLista();pintaThread()}
+
+document.querySelector('#list').onclick=e=>{const c=e.target.closest('[data-id]');if(!c)return;
+ sel=+c.dataset.id;const l=LEADS.find(x=>x.id===sel);l.unread=0;pinta()};
+document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{filtro=b.dataset.f;
+ document.querySelectorAll('[data-f]').forEach(x=>x.classList.toggle('active',x===b));pintaLista()});
+document.querySelector('#q').oninput=pintaLista;
+['sStatus','sResp','sCat'].forEach(id=>document.querySelector('#'+id).onchange=e=>{
+ const l=LEADS.find(x=>x.id===sel);l[{sStatus:'status',sResp:'resp',sCat:'cat'}[id]]=e.target.value;pinta()});
+
+document.querySelector('#composer').onclick=e=>{
+ const l=LEADS.find(x=>x.id===sel);
+ if(e.target.dataset.q){const t=document.querySelector('#txt');t.value=(t.value?t.value+' ':'')+e.target.dataset.q;t.focus();return}
+ if(e.target.id==='bSend'){const t=document.querySelector('#txt');if(!t.value.trim())return;
+  l.msgs.push({d:'out',t:Date.now(),x:t.value.trim()});pinta();return}
+ if(e.target.id==='cNote'){const t=document.querySelector('#txt');if(!t.value.trim())return;
+  l.msgs.push({d:'note',t:Date.now(),x:t.value.trim()});pinta();return}
+ if(e.target.id==='bTpl'||e.target.id==='openTpl')abreModal()};
+document.querySelector('#bNote').onclick=()=>{const x=prompt('Nota interna (não enviada ao cliente):');
+ if(x&&x.trim()){LEADS.find(l=>l.id===sel).msgs.push({d:'note',t:Date.now(),x:x.trim()});pinta()}};
+document.querySelector('#bLead').onclick=()=>alert('Prévia visual: criaria o cadastro de artista a partir deste lead.');
+
+const modal=document.querySelector('#modal');
+function abreModal(){tplSel=0;
+ document.querySelector('#tpls').innerHTML=TPLS.map((t,i)=>
+  `<div class="tpl ${i===0?'on':''}" data-i="${i}"><div class="nm">${t.n}<span class="ok">APROVADO</span></div><div class="bd">${t.b}</div></div>`).join('');
+ modal.classList.add('open')}
+document.querySelector('#tpls').onclick=e=>{const c=e.target.closest('[data-i]');if(!c)return;
+ tplSel=+c.dataset.i;document.querySelectorAll('.tpl').forEach(x=>x.classList.toggle('on',x===c))};
+document.querySelector('#mCancel').onclick=()=>modal.classList.remove('open');
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
+document.onkeydown=e=>{if(e.key==='Escape')modal.classList.remove('open')};
+document.querySelector('#mSend').onclick=()=>{const l=LEADS.find(x=>x.id===sel);
+ l.msgs.push({d:'out',t:Date.now(),tpl:1,x:TPLS[tplSel].b.replace(/<em>|<\/em>/g,'').replace('{{1}}',l.nome.split(' ')[0]).replace('{{2}}','[variável]')});
+ modal.classList.remove('open');pinta()};
+pinta();
+</script></body></html>
