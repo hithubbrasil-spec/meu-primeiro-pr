@@ -1,0 +1,217 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HitHub | Atendimento WhatsApp</title><style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#25212d;background:#f8f8fc}
+*{box-sizing:border-box}body{margin:0}
+.app{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:100vh}
+.sidebar{background:linear-gradient(165deg,#3d1b50,#5d2759 65%,#713053);color:#fff;padding:27px 18px}
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:30px}
+.brand i{display:grid;place-items:center;width:46px;height:42px;background:#fff;color:#7d2a84;border-radius:11px;font-style:normal;font-weight:900;font-size:13px}
+.brand span{font-size:11px;letter-spacing:.13em;font-weight:800;line-height:1.35}
+.nav-label{font-size:11px;letter-spacing:.14em;color:#c7aacb;font-weight:850;margin:26px 12px 10px}
+.nav a{display:flex;align-items:center;gap:10px;color:#eee0ee;text-decoration:none;border-radius:11px;padding:12px 15px;font-size:14px;font-weight:650}
+.nav a .dot{width:7px;height:7px;border-radius:50%;background:#e9a6de;flex:none}
+.nav a .pill{margin-left:auto;background:#e82d82;color:#fff;font-size:10px;font-weight:850;border-radius:99px;padding:2px 7px}
+.nav a.active,.nav a:hover{background:#fff;color:#732878}
+.nav a.active .dot,.nav a:hover .dot{background:#b6379f}
+.content{min-width:0}
+.topbar{height:76px;background:#fff;border-bottom:1px solid #ece7ef;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 clamp(20px,3vw,48px)}
+.searchbar{border:1px solid #e5dfeb;border-radius:11px;background:#faf9fc;color:#898391;padding:13px 17px;width:min(530px,60%);font:inherit;font-size:13px}
+.profile{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:750;white-space:nowrap}
+.profile b{display:inline-grid;place-items:center;width:33px;height:33px;background:#8c3293;color:#fff;border-radius:50%}
+.profile small{display:block;font-weight:600;color:#7d7684;font-size:11px}
+.exit{border:1px solid #e5dfeb;background:#fff;border-radius:9px;padding:9px 13px;font:inherit;font-size:12px;font-weight:750;color:#6c596e;cursor:pointer}
+.wrap{max-width:1600px;margin:auto;padding:39px clamp(20px,3vw,48px) 70px}
+.crumb{font-size:12px;color:#817987;margin-bottom:19px}
+.heading{display:flex;justify-content:space-between;align-items:end;gap:15px}
+.heading h1{font-size:38px;letter-spacing:-.055em;margin:0 0 7px}
+.heading p{color:#706976;margin:0;font-size:14px}
+.primary{border:0;border-radius:10px;background:linear-gradient(95deg,#e82d82,#82248e);color:#fff;padding:13px 17px;font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:26px 0}
+.stat{background:#fff;border:1px solid #eae5ed;border-radius:14px;padding:17px 20px}
+.stat strong{font-size:26px;letter-spacing:-.04em;display:block}
+.stat small{color:#756f7b;font-size:12px}
+.stat.alert{background:#fff3f7;border-color:#f6d6e3}.stat.alert strong{color:#cd2a74}
+.toolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:0 0 18px}
+.toolbar select,.toolbar input{height:40px;background:#fff;border:1px solid #e5deea;border-radius:9px;padding:0 12px;color:#5b5361;font:inherit;font-size:12px}
+.toolbar input{min-width:160px;flex:1}
+.tabs{display:flex;border:1px solid #e5deea;border-radius:10px;padding:3px;background:#fff}
+.tabs button{background:none;border:0;border-radius:7px;color:#706878;font:inherit;font-size:12px;font-weight:750;padding:8px 11px;cursor:pointer}
+.tabs button.active{background:#f5e8f7;color:#81268a}
+.panel{background:#fff;border:1px solid #e9e3ec;border-radius:16px;overflow:hidden;box-shadow:0 3px 12px #431d5108}
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;font-size:11px;letter-spacing:.11em;color:#7b7381;font-weight:850;background:#fbf9fc;padding:14px 18px;border-bottom:1px solid #eee8ef;white-space:nowrap}
+tbody td{padding:15px 18px;border-bottom:1px solid #f2edf4;font-size:13px;vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#fdfbfe}
+.who{font-weight:800}
+.who small{display:block;font-weight:600;color:#847c88;font-size:11px;margin-top:3px}
+.msg{color:#5f5866;line-height:1.45;max-width:380px;overflow-wrap:anywhere}
+.tag{display:inline-block;font-size:10px;font-weight:850;color:#8c367b;background:#fae8f2;padding:5px 8px;border-radius:6px}
+.tag.audicao{color:#6c3e9e;background:#eee8f9}
+.tag.contrato{color:#2f6a86;background:#e4f1f7}
+.tag.royalties{color:#387a50;background:#e9f5ed}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;border-radius:99px;padding:6px 10px}
+.status .dot{width:7px;height:7px;border-radius:50%}
+.status.novo{color:#c72c70;background:#fdeaf2}.status.novo .dot{background:#e82d82}
+.status.andamento{color:#8a5a12;background:#fdf1de}.status.andamento .dot{background:#d99522}
+.status.resolvido{color:#387a50;background:#e9f5ed}.status.resolvido .dot{background:#48a06b}
+.when{font-size:12px;color:#746c77;white-space:nowrap}
+.when small{display:block;color:#948c98;font-size:11px}
+.rowacts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.rowacts button,.rowacts a{height:30px;display:inline-flex;align-items:center;border-radius:7px;border:1px solid #e7dfea;background:#fff;color:#6c596e;font:inherit;font-size:10px;font-weight:800;padding:0 9px;cursor:pointer;text-decoration:none}
+.rowacts button.go{color:#7e2685;background:#f9f0fa}
+.empty{padding:56px 22px;text-align:center;color:#8b8290}
+.empty .ico{width:52px;height:52px;border-radius:16px;background:#f5e8f7;color:#8f298d;display:grid;place-items:center;margin:0 auto 14px;font-size:22px}
+.empty h3{margin:0 0 6px;font-size:15px;color:#4e4756;letter-spacing:-.02em}
+.empty p{margin:0;font-size:12px;line-height:1.55}
+.note{margin-top:18px;color:#857d88;font-size:12px;line-height:1.5}
+.modalwrap{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#21152b99;z-index:4;padding:15px}
+.modalwrap.open{display:flex}
+.modal{background:#fff;width:min(490px,100%);max-height:95vh;overflow:auto;border-radius:18px;padding:28px;box-shadow:0 20px 70px #21102b66}
+.modal h2{margin:0 0 6px;letter-spacing:-.04em}
+.modal p{font-size:13px;color:#766f7b;line-height:1.5;margin:0 0 17px}
+.modal label{display:block;font-size:12px;font-weight:800;margin:12px 0 6px}
+.modal input,.modal select,.modal textarea{font:inherit;font-size:13px;border:1px solid #e2d9e5;border-radius:9px;padding:10px;width:100%}
+.modal textarea{min-height:75px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:19px}
+.cancel{border:1px solid #e2dce5;border-radius:9px;background:#fff;padding:10px 13px;font:inherit;font-weight:750;cursor:pointer}
+@media(max-width:900px){.app{display:block}.sidebar{display:none}.wrap{padding:28px 17px 50px}.topbar{height:63px}.heading h1{font-size:32px}.stats{grid-template-columns:repeat(2,1fr)}
+ .panel{border:0;background:none;box-shadow:none}table,thead,tbody,tr,td{display:block}thead{display:none}
+ tbody tr{background:#fff;border:1px solid #e9e3ec;border-radius:14px;margin-bottom:10px;padding:6px 4px}
+ tbody td{border:0;padding:8px 14px}tbody td::before{content:attr(data-l);display:block;font-size:10px;letter-spacing:.1em;font-weight:850;color:#948c98;margin-bottom:4px}
+ .msg{max-width:none}}
+@media(max-width:570px){.heading{align-items:start;flex-direction:column}.row{grid-template-columns:1fr}.profile small{display:none}.searchbar{font-size:11px}}
+</style></head><body>
+<div class="app">
+ <aside class="sidebar">
+  <div class="brand"><i>HH</i><span>HITHUB<br>BRASIL</span></div>
+  <nav class="nav">
+   <a href="#"><span class="dot"></span>Solicitações</a>
+   <a href="#"><span class="dot"></span>Caixa da empresa</a>
+   <a href="#"><span class="dot"></span>Suporte<span class="pill">1</span></a>
+   <a href="#"><span class="dot"></span>Notificações</a>
+   <a href="#" class="active"><span class="dot"></span>Atendimento WhatsApp</a>
+   <a href="#"><span class="dot"></span>Indicações</a>
+   <a href="#"><span class="dot"></span>Audições</a>
+   <a href="#"><span class="dot"></span>Revisão de obras</a>
+   <a href="#"><span class="dot"></span>Pedidos de alteração</a>
+   <a href="#"><span class="dot"></span>Cadastrar novo ISRC</a>
+   <div class="nav-label">ADMINISTRAÇÃO</div>
+   <a href="#"><span class="dot"></span>Equipe</a>
+   <a href="#"><span class="dot"></span>Configurações</a>
+  </nav>
+ </aside>
+ <main class="content">
+  <header class="topbar">
+   <input class="searchbar" placeholder="Buscar artistas, compositores, projetos, obras, contratos…">
+   <div class="profile"><b>HB</b><div>HitHub Brasil (Admin Principal)<small>superadmin</small></div><button class="exit">Sair</button></div>
+  </header>
+  <div class="wrap">
+   <div class="crumb">Avisos › Atendimento WhatsApp</div>
+   <div class="heading">
+    <div><h1>Atendimento WhatsApp</h1><p id="lead">Contatos recebidos pelo bot de WhatsApp, prontos para triagem da equipe.</p></div>
+    <button class="primary" id="new">+ Registrar contato manual</button>
+   </div>
+
+   <div class="stats">
+    <div class="stat"><strong id="totalCount">0</strong><small>Contatos recebidos</small></div>
+    <div class="stat alert"><strong id="novoCount">0</strong><small>Novos sem resposta</small></div>
+    <div class="stat"><strong id="andamentoCount">0</strong><small>Em atendimento</small></div>
+    <div class="stat"><strong id="resolvidoCount">0</strong><small>Resolvidos</small></div>
+   </div>
+
+   <div class="toolbar">
+    <div class="tabs">
+     <button data-filter="todos" class="active">Todos</button>
+     <button data-filter="novo">Novos</button>
+     <button data-filter="andamento">Em atendimento</button>
+     <button data-filter="resolvido">Resolvidos</button>
+    </div>
+    <select id="categoria">
+     <option value="">Todas as categorias</option>
+     <option>Audição</option><option>Contrato</option><option>Royalties</option><option>Shows</option><option>Outros</option>
+    </select>
+    <input id="query" placeholder="Buscar por nome, telefone ou mensagem…">
+   </div>
+
+   <div class="panel">
+    <table>
+     <thead><tr><th>Nome</th><th>Telefone</th><th>Categoria</th><th>Mensagem</th><th>Recebido em</th><th>Status</th></tr></thead>
+     <tbody id="rows"></tbody>
+    </table>
+    <div class="empty" id="empty" hidden>
+     <div class="ico">💬</div>
+     <h3>Nenhum contato recebido pelo WhatsApp ainda.</h3>
+     <p>Assim que o bot receber uma mensagem, o contato aparece aqui para<br>a equipe classificar, responder e encaminhar.</p>
+    </div>
+   </div>
+   <p class="note">Os contatos chegam automaticamente pelo bot. Use “Registrar contato manual” para lançar um atendimento iniciado por telefone ou presencialmente.</p>
+  </div>
+ </main>
+</div>
+
+<div class="modalwrap" id="modal">
+ <form class="modal" id="create">
+  <h2>Registrar contato</h2>
+  <p>Lance manualmente um atendimento que não passou pelo bot.</p>
+  <label for="nome">Nome</label><input id="nome" required>
+  <div class="row">
+   <div><label for="fone">Telefone</label><input id="fone" placeholder="(11) 90000-0000" required></div>
+   <div><label for="cat">Categoria</label><select id="cat"><option>Audição</option><option>Contrato</option><option>Royalties</option><option>Shows</option><option>Outros</option></select></div>
+  </div>
+  <label for="texto">Mensagem</label><textarea id="texto" placeholder="Resumo do que o contato pediu"></textarea>
+  <label for="st">Status</label><select id="st"><option value="novo">Novo</option><option value="andamento">Em atendimento</option><option value="resolvido">Resolvido</option></select>
+  <div class="actions"><button type="button" class="cancel" id="cancel">Cancelar</button><button class="primary" type="submit">Salvar contato</button></div>
+ </form>
+</div>
+
+<script>
+const LABELS={novo:'Novo',andamento:'Em atendimento',resolvido:'Resolvido'};
+let contatos=[];let statusFilter='todos';
+const safe=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const slug=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+function quando(iso){const d=new Date(iso);if(isNaN(d))return{d:'—',h:''};
+ const p=n=>String(n).padStart(2,'0');
+ const mins=Math.floor((Date.now()-d)/6e4);
+ const rel=mins<1?'agora':mins<60?`há ${mins} min`:mins<1440?`há ${Math.floor(mins/60)} h`:`há ${Math.floor(mins/1440)} dia(s)`;
+ return{d:`${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`,h:rel}}
+function render(){
+ const q=slug(document.querySelector('#query').value.trim());
+ const cat=document.querySelector('#categoria').value;
+ const vis=contatos.filter(c=>(statusFilter==='todos'||c.status===statusFilter)
+  &&(!cat||c.categoria===cat)
+  &&(!q||slug(`${c.nome} ${c.telefone} ${c.mensagem}`).includes(q)));
+ const tb=document.querySelector('#rows');
+ tb.innerHTML=vis.map(c=>{const t=quando(c.recebido);return `<tr>
+  <td data-l="NOME"><div class="who">${safe(c.nome)}<small>${safe(c.origem||'Bot WhatsApp')}</small></div>
+   <div class="rowacts"><button class="go" data-next="${c.id}">Avançar status</button><a href="https://wa.me/${String(c.telefone).replace(/\D/g,'')}" target="_blank" rel="noopener">Abrir conversa →</a></div></td>
+  <td data-l="TELEFONE">${safe(c.telefone)}</td>
+  <td data-l="CATEGORIA"><span class="tag ${slug(c.categoria)}">${safe(c.categoria)}</span></td>
+  <td data-l="MENSAGEM"><div class="msg">${safe(c.mensagem)}</div></td>
+  <td data-l="RECEBIDO EM"><div class="when">${t.d}<small>${t.h}</small></div></td>
+  <td data-l="STATUS"><span class="status ${c.status}"><span class="dot"></span>${LABELS[c.status]}</span></td></tr>`}).join('');
+ document.querySelector('#empty').hidden=vis.length>0;
+ document.querySelector('#lead').textContent=`${contatos.length} contato(s) recebido(s) pelo bot de WhatsApp.`;
+ const n=s=>contatos.filter(c=>c.status===s).length;
+ totalCount.textContent=contatos.length;novoCount.textContent=n('novo');
+ andamentoCount.textContent=n('andamento');resolvidoCount.textContent=n('resolvido');
+}
+document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{statusFilter=b.dataset.filter;
+ document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));render()});
+document.querySelector('#categoria').onchange=render;
+document.querySelector('#query').oninput=render;
+document.querySelector('#rows').onclick=e=>{const id=e.target.dataset.next;if(!id)return;
+ const c=contatos.find(x=>String(x.id)===id);const ordem=['novo','andamento','resolvido'];
+ c.status=ordem[(ordem.indexOf(c.status)+1)%ordem.length];render()};
+const modal=document.querySelector('#modal');
+document.querySelector('#new').onclick=()=>modal.classList.add('open');
+document.querySelector('#cancel').onclick=()=>modal.classList.remove('open');
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
+document.onkeydown=e=>{if(e.key==='Escape')modal.classList.remove('open')};
+document.querySelector('#create').onsubmit=e=>{e.preventDefault();
+ contatos.unshift({id:Date.now(),nome:nome.value,telefone:fone.value,categoria:cat.value,
+  mensagem:texto.value||'Sem mensagem registrada.',recebido:new Date().toISOString(),
+  status:st.value,origem:'Registro manual'});
+ e.target.reset();modal.classList.remove('open');render()};
+render();
+</script></body></html>
